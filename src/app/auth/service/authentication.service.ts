@@ -94,36 +94,44 @@ export class AuthenticationService {
    * @returns user
    */
   register(nombre: string, email: string, password: string) {
-    console.log("Component registro: USERNAME: " + nombre + ' - EMAIL: ' + email + ' - PASSWORD: ' + password);
+    // console.log("Component registro: USERNAME: " + nombre + ' - EMAIL: ' + email + ' - PASSWORD: ' + password);
 
     return this._http
-    .post<any>(`${environment.base_url}/usuario`, { nombre, email, password })
+    .post(`${environment.base_url}/usuario`, { nombre, email, password })
     .pipe(
-      map(user => {
-        console.log('user: ', user);
-        // login successful if there's a jwt token in the response
-        if (user && user.token) {
-          // store user details and jwt token in local storage to keep user logged in between page refreshes
-          localStorage.setItem('currentUser', JSON.stringify(user));
-
-          // Display welcome toast!
-          setTimeout(() => {
-            this._toastrService.success(
-              'Bienvenido, ingresaste como ' +
-                user.role +
-                ' Inicia tu exploración. Enjoy! 🎉',
-              '👋 Bienvenido, ' + user.firstName + '!',
-              { toastClass: 'toast ngx-toastr', closeButton: true }
-            );
-          }, 2500);
-
-          // notify
-          this.currentUserSubject.next(user);
-        }
-
-        return user;
-      })
+      map( user => {
+        console.log("USUARIO: ", user);
+      }, 
+        err => {
+          console.log("ERROR: ", err);
+        })
     );
+    // .pipe(
+    //   map(user => {
+    //     console.log('user: ', user);
+    //     // login successful if there's a jwt token in the response
+    //     if (user && user.token) {
+    //       // store user details and jwt token in local storage to keep user logged in between page refreshes
+    //       localStorage.setItem('currentUser', JSON.stringify(user));
+
+    //       // Display welcome toast!
+    //       setTimeout(() => {
+    //         this._toastrService.success(
+    //           'Bienvenido, ingresaste como ' +
+    //             user.role +
+    //             ' Inicia tu exploración. Enjoy! 🎉',
+    //           '👋 Bienvenido, ' + user.firstName + '!',
+    //           { toastClass: 'toast ngx-toastr', closeButton: true }
+    //         );
+    //       }, 2500);
+
+    //       // notify
+    //       this.currentUserSubject.next(user);
+    //     }
+
+    //     // return user;
+    //   })
+    // );
   }
 
   /**
