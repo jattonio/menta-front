@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 
 import { environment } from 'environments/environment';
 import { User, Role } from 'app/auth/models';
@@ -53,14 +53,11 @@ export class AuthenticationService {
    */
   login(email: string, password: string) {
 
-    // console.log('email: ', email);
-    // console.log('pass: ', password);
     return this._http
       .post<any>(`${environment.apiUrl}/users/authenticate`, { email, password })
       // .post<any>(`${environment.base_url}/login`, { email, password })
       .pipe(
         map(user => {
-          // console.log('user: ', user);
           // login successful if there's a jwt token in the response
           if (user && user.token) {
             // store user details and jwt token in local storage to keep user logged in between page refreshes
@@ -87,13 +84,13 @@ export class AuthenticationService {
   }
 
   /**
-   * User login
+   * User Signup
    *
    * @param email
    * @param password
    * @returns user
    */
-  register(nombre: string, email: string, password: string) {
+  signup(nombre: string, email: string, password: string) {
     // console.log("Component registro: USERNAME: " + nombre + ' - EMAIL: ' + email + ' - PASSWORD: ' + password);
 
     return this._http
@@ -101,11 +98,19 @@ export class AuthenticationService {
     .pipe(
       map( user => {
         console.log("USUARIO: ", user);
-      }, 
-        err => {
-          console.log("ERROR: ", err);
-        })
-    );
+      }, err => {
+        console.log("AUTHENTICATION SERVICE: ", err);
+      }),
+      // catchError( (err) => {
+      //   // console.log("ESTATUS DEL ERROR: ", err );
+      //   return throwError(err);
+      //   // if (err.status === 400 ) {
+      //   //   console.log("ERROR DESDE EL SERVICIO: ", err );
+      //   // } else {
+      //   //   return throwError('Mensaje de error');
+      //   // }
+      // })
+);
     // .pipe(
     //   map(user => {
     //     console.log('user: ', user);

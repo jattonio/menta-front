@@ -8,6 +8,7 @@ import { Subject } from 'rxjs';
 import { CoreConfigService } from '@core/services/config.service';
 import { ConfirmPasswordValidator } from '../confirm-password.validator';
 import { AuthenticationService } from '../../../../auth/service/authentication.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-auth-register-v2',
@@ -91,7 +92,7 @@ export class AuthRegisterV2Component implements OnInit {
       // Login
       this.loading = true;
       this._authenticationService
-        .register(this.f.username.value, this.f.email.value, this.f.password.value)
+        .signup(this.f.username.value, this.f.email.value, this.f.password.value)
         // .pipe(first())
         .subscribe(
           data => {
@@ -99,7 +100,7 @@ export class AuthRegisterV2Component implements OnInit {
             // this._router.navigate([this.returnUrl]);
           },
           err => {
-            console.warn(err);
+            // console.warn(err);
             this.error = err;
             this.loading = false;
           }
