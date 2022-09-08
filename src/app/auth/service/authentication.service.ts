@@ -90,11 +90,11 @@ export class AuthenticationService {
    * @param password
    * @returns user
    */
-  signup(nombre: string, email: string, password: string) {
+  signup(username: string, email: string, password: string) {
     // console.log("Component registro: USERNAME: " + nombre + ' - EMAIL: ' + email + ' - PASSWORD: ' + password);
 
     return this._http
-    .post(`${environment.base_url}/usuario`, { nombre, email, password })
+    .post(`${environment.base_url}/signup`, { username, email, password })
     .pipe(
       map( user => {
         console.log("USUARIO: ", user);
