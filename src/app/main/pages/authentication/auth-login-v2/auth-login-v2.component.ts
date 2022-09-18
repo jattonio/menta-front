@@ -90,6 +90,13 @@ export class AuthLoginV2Component implements OnInit {
       .pipe(first())
       .subscribe(
         data => {
+          // console.log(this.f);
+          if ( this.f.rememberMe.value ) {
+            localStorage.setItem('email', this.f.email.value);
+          }else{ 
+            localStorage.removeItem('email');
+          }
+
           this._router.navigate([this.returnUrl]);
         },
         error => {
@@ -107,8 +114,9 @@ export class AuthLoginV2Component implements OnInit {
    */
   ngOnInit(): void {
     this.loginForm = this._formBuilder.group({
-      email: ['admin@demo.com', [Validators.required, Validators.email]],
-      password: ['admin', Validators.required]
+      email: [ localStorage.getItem('email') || '', [Validators.required, Validators.email]],
+      password: ['1234', Validators.required],
+      rememberMe: [ localStorage.getItem('email') ? true : false ]
     });
 
     // get return url from route parameters or default to '/'

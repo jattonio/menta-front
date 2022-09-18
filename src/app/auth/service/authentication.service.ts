@@ -6,6 +6,7 @@ import { map, catchError } from 'rxjs/operators';
 import { environment } from 'environments/environment';
 import { User, Role } from 'app/auth/models';
 import { ToastrService } from 'ngx-toastr';
+import { SignupForm } from '../interfaces/signup.interface';
 
 @Injectable({ providedIn: 'root' })
 export class AuthenticationService {
@@ -54,31 +55,33 @@ export class AuthenticationService {
   login(email: string, password: string) {
 
     return this._http
-      .post<any>(`${environment.apiUrl}/users/authenticate`, { email, password })
-      // .post<any>(`${environment.base_url}/login`, { email, password })
+      // .post<any>(`${environment.apiUrl}/users/authenticate`, { email, password })
+      .post<any>(`${environment.base_url}/login`, { email, password })
       .pipe(
         map(user => {
           // login successful if there's a jwt token in the response
           if (user && user.token) {
             // store user details and jwt token in local storage to keep user logged in between page refreshes
-            localStorage.setItem('currentUser', JSON.stringify(user));
+            localStorage.setItem('currentUser', JSON.stringify(user.user));
 
             // Display welcome toast!
             setTimeout(() => {
               this._toastrService.success(
                 'Bienvenido, ingresaste como ' +
-                  user.role +
+                  user.user.role +
                   ' Inicia tu exploración. Enjoy! 🎉',
-                '👋 Bienvenido, ' + user.firstName + '!',
+                '👋 Bienvenido, ' + user.user.username + '!',
                 { toastClass: 'toast ngx-toastr', closeButton: true }
               );
             }, 2500);
 
             // notify
-            this.currentUserSubject.next(user);
+            this.currentUserSubject.next(user.user);
           }
 
           return user;
+        }, err => {
+          throwError (err);
         })
       );
   }
@@ -90,15 +93,40 @@ export class AuthenticationService {
    * @param password
    * @returns user
    */
-  signup(username: string, email: string, password: string) {
-    // console.log("Component registro: USERNAME: " + nombre + ' - EMAIL: ' + email + ' - PASSWORD: ' + password);
+   signup( formData: SignupForm ) {
+  // signup(username: string, email: string, password: string) {
+      // console.log("Component registro: USERNAME: " + nombre + ' - EMAIL: ' + email + ' - PASSWORD: ' + password);
 
     return this._http
-    .post(`${environment.base_url}/signup`, { username, email, password })
+    .post(`${environment.base_url}/signup`, formData)
     .pipe(
-      map( user => {
+      map( (user: any) => {
+
         console.log("USUARIO: ", user);
-      }, err => {
+
+        // login successful if there's a jwt token in the response
+        if (user && user.token) {
+          // store user details and jwt token in local storage to keep user logged in between page refreshes
+          localStorage.setItem('currentUser', JSON.stringify(user));
+
+          // Display welcome toast!
+          setTimeout(() => {
+            this._toastrService.success(
+              'Bienvenido, ingresaste como ' +
+              user.user.role +
+                ' Inicia tu exploración. Enjoy! 🎉',
+              '👋 Bienvenido, ' + user.user.username + '!',
+              { toastClass: 'toast ngx-toastr', closeButton: true }
+            );
+          }, 2500);
+
+          // notify
+          this.currentUserSubject.next(user.user);
+        }
+
+        // return user;
+
+  }, err => {
         console.log("AUTHENTICATION SERVICE: ", err);
       }),
       // catchError( (err) => {

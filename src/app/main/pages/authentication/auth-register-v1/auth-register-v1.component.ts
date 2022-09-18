@@ -78,7 +78,7 @@ export class AuthRegisterV1Component implements OnInit {
       return;
     }
 
-    this._authenticationService.signup(this.f.username.value, this.f.email.value, this.f.password.value);
+    this._authenticationService.signup( this.registerForm.value );
 
   }
 

@@ -25,6 +25,7 @@ export class AuthRegisterV2Component implements OnInit {
   public submitted = false;
   public loading = false;
   public error = '';
+  public returnUrl: string;
 
   // Private
   private _unsubscribeAll: Subject<any>;
@@ -37,6 +38,8 @@ export class AuthRegisterV2Component implements OnInit {
    */
   constructor( private _coreConfigService: CoreConfigService, 
                 private _formBuilder: UntypedFormBuilder,
+                private _route: ActivatedRoute,
+                private _router: Router,
                 private _authenticationService: AuthenticationService
                 ) {
     this._unsubscribeAll = new Subject();
@@ -92,12 +95,13 @@ export class AuthRegisterV2Component implements OnInit {
       // Login
       this.loading = true;
       this._authenticationService
-        .signup(this.f.username.value, this.f.email.value, this.f.password.value)
-        // .pipe(first())
+        .signup( this.registerForm.value )
+        // .signup(this.f.username.value, this.f.email.value, this.f.password.value)
+      // .pipe(first())
         .subscribe(
           data => {
             console.log("llamada a register component: ", data);
-            // this._router.navigate([this.returnUrl]);
+            this._router.navigate([this.returnUrl]);
           },
           err => {
             // console.warn(err);
@@ -116,13 +120,17 @@ export class AuthRegisterV2Component implements OnInit {
    */
   ngOnInit(): void {
     this.registerForm = this._formBuilder.group({
-      username: ['', [Validators.required]],
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required],
-      confirmPassword: ['', Validators.required, ],
-      privacyPolicy: [false,Validators.requiredTrue]
+      username: ['Antonio', [Validators.required]],
+      email: ['jattonio@gmail.com', [Validators.required, Validators.email]],
+      password: ['1234', Validators.required],
+      confirmPassword: ['1234', Validators.required, ],
+      privacyPolicy: [true,Validators.requiredTrue]
     }, { validator: ConfirmPasswordValidator('password','confirmPassword') 
     });
+
+    // get return url from route parameters or default to '/'
+    this.returnUrl = this._route.snapshot.queryParams['returnUrl'] || '/';
+
 
     // Subscribe to config changes
     this._coreConfigService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe(config => {

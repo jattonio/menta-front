@@ -61,8 +61,8 @@
               tabindex="1"
             />
             <div *ngIf="submitted && f.email.errors" class="invalid-feedback">
-              <div *ngIf="f.email.errors.required">Email is required</div>
-              <div *ngIf="f.email.errors.email">Email must be a valid email address</div>
+              <div *ngIf="f.email.errors.required">Ingresa tu correo</div>
+              <div *ngIf="f.email.errors.email">Ingresa un correo válido</div>
             </div>
           </div>
           <div class="form-group">
@@ -98,25 +98,29 @@
               class="invalid-feedback"
               [ngClass]="{ 'd-block': submitted && f.password.errors }"
             >
-              <div *ngIf="f.password.errors.required">Password is required</div>
+              <div *ngIf="f.password.errors.required">Ingresa la contraseña</div>
             </div>
           </div>
           <div class="form-group">
             <div class="custom-control custom-checkbox">
-              <input class="custom-control-input" id="remember-me" type="checkbox" tabindex="3" />
-              <label class="custom-control-label" for="remember-me"> Remember Me</label>
+              <input class="custom-control-input" 
+                      id="remember-me" 
+                      type="checkbox" 
+                      formControlName="rememberMe"
+                      tabindex="3" />
+              <label class="custom-control-label" for="remember-me"> Recordarme</label>
             </div>
           </div>
           <button [disabled]="loading" class="btn btn-primary btn-block" tabindex="4" rippleEffect>
-            <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>Sign in
+            <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>Ingresar
           </button>
         </form>
         <p class="text-center mt-2">
-          <span>New on our platform?</span
-          ><a routerLink="/pages/authentication/register-v2"><span>&nbsp;Create an account</span></a>
+          <span>¿Aún no tienes cuenta?</span
+          ><a routerLink="/pages/authentication/register-v2"><span>&nbsp;Crea una cuenta</span></a>
         </p>
         <div class="divider my-2">
-          <div class="divider-text">or</div>
+          <div class="divider-text">o</div>
         </div>
         <div class="auth-footer-btn d-flex justify-content-center">
           <a class="btn btn-facebook" href="javascript:void(0)"><i data-feather="facebook"></i></a
