@@ -61,6 +61,8 @@ export class AuthenticationService {
         map(user => {
           // login successful if there's a jwt token in the response
           if (user && user.token) {
+            user.user.firstName = user.user.username.firstname;
+            user.user.username = user.user.username.firstname;
             // store user details and jwt token in local storage to keep user logged in between page refreshes
             localStorage.setItem('currentUser', JSON.stringify(user.user));
 
@@ -70,7 +72,7 @@ export class AuthenticationService {
                 'Bienvenido, ingresaste como ' +
                   user.user.role +
                   ' Inicia tu exploración. Enjoy! 🎉',
-                '👋 Bienvenido, ' + user.user.username + '!',
+                '👋 Bienvenido, ' + user.user.firstName + '!',
                 { toastClass: 'toast ngx-toastr', closeButton: true }
               );
             }, 2500);
@@ -106,6 +108,10 @@ export class AuthenticationService {
 
         // login successful if there's a jwt token in the response
         if (user && user.token) {
+
+          user.user.firstName = user.user.username.firstname;
+          user.user.username = user.user.username.firstname;
+        
           // store user details and jwt token in local storage to keep user logged in between page refreshes
           localStorage.setItem('currentUser', JSON.stringify(user));
 
@@ -115,7 +121,7 @@ export class AuthenticationService {
               'Bienvenido, ingresaste como ' +
               user.user.role +
                 ' Inicia tu exploración. Enjoy! 🎉',
-              '👋 Bienvenido, ' + user.user.username + '!',
+              '👋 Bienvenido, ' + user.user.firstName + '!',
               { toastClass: 'toast ngx-toastr', closeButton: true }
             );
           }, 2500);
