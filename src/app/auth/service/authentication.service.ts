@@ -61,24 +61,27 @@ export class AuthenticationService {
         map(user => {
           // login successful if there's a jwt token in the response
           if (user && user.token) {
-            user.user.firstName = user.user.username.firstname;
-            user.user.username = user.user.username.firstname;
+            user = user.user;
+            user.firstName = user.username.firstname;
+            user.username = user.username.firstname;
             // store user details and jwt token in local storage to keep user logged in between page refreshes
-            localStorage.setItem('currentUser', JSON.stringify(user.user));
+            localStorage.setItem('currentUser', JSON.stringify(user));
+            // console.log(user);
+            // console.log("Avatar: ", user.user.avatar);
 
             // Display welcome toast!
             setTimeout(() => {
               this._toastrService.success(
                 'Bienvenido, ingresaste como ' +
-                  user.user.role +
+                  user.role +
                   ' Inicia tu exploración. Enjoy! 🎉',
-                '👋 Bienvenido, ' + user.user.firstName + '!',
+                '👋 Bienvenido, ' + user.firstName + '!',
                 { toastClass: 'toast ngx-toastr', closeButton: true }
               );
             }, 2500);
 
             // notify
-            this.currentUserSubject.next(user.user);
+            this.currentUserSubject.next(user);
           }
 
           return user;
