@@ -80,15 +80,21 @@
               >{{ this.currentUser.firstName }} {{ this.currentUser.lastName }}</span
             ><span class="user-status">{{ this.currentUser.role }}</span>
           </div>
-          <span class="avatar"
-            ><img
+          <span *ngIf="!showInitials" class="avatar">
+            <img
               class="round"
               src="assets/images/portrait/small/{{ this.currentUser.avatar }}"
               alt="avatar"
               height="40"
-              width="40" /><span class="avatar-status-online"></span
-          ></span>
-        </ng-container>
+              width="40" />
+            <span class="avatar-status-online"></span>
+          </span>
+
+          <div *ngIf="showInitials" class="avatar {{this.circleColor}}">
+            <div class="avatar-content">{{this.initials}}</div>
+            <span class="avatar-status-online"></span>
+          </div>
+    </ng-container>
       </a>
       <div ngbDropdownMenu aria-labelledby="navbarUserDropdown" class="dropdown-menu dropdown-menu-right">
         <a ngbDropdownItem [routerLink]="['/pages/profile']"

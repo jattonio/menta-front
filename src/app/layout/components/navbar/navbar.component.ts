@@ -31,6 +31,17 @@ export class NavbarComponent implements OnInit, OnDestroy {
   public prevSkin: string;
 
   public currentUser: User;
+  public showInitials = false;
+  public initials: String;
+  public circleColor: string;
+  private initialColors = [
+    'bg-light-primary', 
+    'bg-light-secondary', 
+    'bg-light-success', 
+    'bg-light-danger', 
+    'bg-light-warning',
+    'bg-light-info'
+  ];
 
   public languageOptions: any;
   public navigation: any;
@@ -179,6 +190,17 @@ export class NavbarComponent implements OnInit, OnDestroy {
     // get the currentUser details from localStorage
     this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
 
+    console.log('Avatar:', this.currentUser.avatar);
+
+    if ( !this.currentUser.avatar ) {
+      this.showInitials = true;
+      this.createInitials();
+      console.log('Iniciales: ', this.initials );
+      const randomIndex = Math.floor(Math.random() * Math.floor(this.initialColors.length));
+      this.circleColor = this.initialColors[randomIndex];
+      console.log('Color Iniciales', this.circleColor);
+    }
+
     // Subscribe to the config changes
     this._coreConfigService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe(config => {
       this.coreConfig = config;
@@ -214,6 +236,32 @@ export class NavbarComponent implements OnInit, OnDestroy {
       id: this._translateService.currentLang
     });
   }
+
+
+
+
+  
+  /**
+   * CreateInitials
+   */
+  createInitials(): void {
+    let initials = '';
+
+    for ( let i=0 ; i < this.currentUser.firstName.length ; i++ ) {
+
+      if ( this.currentUser.firstName.charAt(i) === ' ' )
+        continue;
+        
+      if ( this.currentUser.firstName.charAt(i) === this.currentUser.firstName.charAt(i).toUpperCase() ) {
+        initials += this.currentUser.firstName.charAt(i);
+
+        if ( initials.length == 2 )
+          break;
+      }
+    }
+    this.initials = initials;
+  }
+
 
   /**
    * On destroy
