@@ -63,7 +63,8 @@ export class AuthenticationService {
           if (user && user.token) {
             user = user.user;
             user.firstName = user.username.firstname;
-            user.username = user.username.firstname;
+            user.lastName = user.username.lastname;
+            delete user.username;
             // store user details and jwt token in local storage to keep user logged in between page refreshes
             localStorage.setItem('currentUser', JSON.stringify(user));
             // console.log(user);

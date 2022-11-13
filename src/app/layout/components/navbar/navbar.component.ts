@@ -190,15 +190,13 @@ export class NavbarComponent implements OnInit, OnDestroy {
     // get the currentUser details from localStorage
     this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
 
-    console.log('Avatar:', this.currentUser.avatar);
 
+    // Generar iniciales en caso de que no tener avatar-imagen
     if ( !this.currentUser.avatar ) {
       this.showInitials = true;
       this.createInitials();
-      console.log('Iniciales: ', this.initials );
       const randomIndex = Math.floor(Math.random() * Math.floor(this.initialColors.length));
       this.circleColor = this.initialColors[randomIndex];
-      console.log('Color Iniciales', this.circleColor);
     }
 
     // Subscribe to the config changes
@@ -246,14 +244,15 @@ export class NavbarComponent implements OnInit, OnDestroy {
    */
   createInitials(): void {
     let initials = '';
+    let completeName = this.currentUser.firstName + this.currentUser.lastName;
 
-    for ( let i=0 ; i < this.currentUser.firstName.length ; i++ ) {
+    for ( let i=0 ; i < completeName.length ; i++ ) {
 
-      if ( this.currentUser.firstName.charAt(i) === ' ' )
+      if ( completeName.charAt(i) === ' ' )
         continue;
         
-      if ( this.currentUser.firstName.charAt(i) === this.currentUser.firstName.charAt(i).toUpperCase() ) {
-        initials += this.currentUser.firstName.charAt(i);
+      if ( completeName.charAt(i) === completeName.charAt(i).toUpperCase() ) {
+        initials += completeName.charAt(i);
 
         if ( initials.length == 2 )
           break;
