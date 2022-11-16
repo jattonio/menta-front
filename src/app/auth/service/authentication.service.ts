@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { BehaviorSubject, Observable, throwError } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
+import { map, tap, catchError } from 'rxjs/operators';
 
 import { environment } from 'environments/environment';
 import { User, Role } from 'app/auth/models';
@@ -61,14 +61,15 @@ export class AuthenticationService {
         map(user => {
           // login successful if there's a jwt token in the response
           if (user && user.token) {
+            localStorage.setItem('token', user.token);
+            console.log('token: ', user.token);
+  
             user = user.user;
             user.firstName = user.username.firstname;
             user.lastName = user.username.lastname;
             delete user.username;
             // store user details and jwt token in local storage to keep user logged in between page refreshes
             localStorage.setItem('currentUser', JSON.stringify(user));
-            // console.log(user);
-            // console.log("Avatar: ", user.user.avatar);
 
             // Display welcome toast!
             setTimeout(() => {
@@ -92,6 +93,7 @@ export class AuthenticationService {
       );
   }
 
+
   /**
    * User Signup
    *
@@ -108,14 +110,16 @@ export class AuthenticationService {
     .pipe(
       map( (user: any) => {
 
-        console.log("USUARIO: ", user);
-
         // login successful if there's a jwt token in the response
         if (user && user.token) {
+
+          localStorage.setItem('token', user.token);
+
           user = user.user;
           user.firstName = user.username.firstname;
-          user.username = user.username.firstname;
-        
+          user.lastName = user.username.lastname;
+          delete user.username;
+      
           // store user details and jwt token in local storage to keep user logged in between page refreshes
           localStorage.setItem('currentUser', JSON.stringify(user));
 
@@ -134,56 +138,45 @@ export class AuthenticationService {
           this.currentUserSubject.next(user);
         }
 
-        // return user;
-
-  }, err => {
+      }, err => {
         console.log("AUTHENTICATION SERVICE: ", err);
       }),
-      // catchError( (err) => {
-      //   // console.log("ESTATUS DEL ERROR: ", err );
-      //   return throwError(err);
-      //   // if (err.status === 400 ) {
-      //   //   console.log("ERROR DESDE EL SERVICIO: ", err );
-      //   // } else {
-      //   //   return throwError('Mensaje de error');
-      //   // }
-      // })
-);
-    // .pipe(
-    //   map(user => {
-    //     console.log('user: ', user);
-    //     // login successful if there's a jwt token in the response
-    //     if (user && user.token) {
-    //       // store user details and jwt token in local storage to keep user logged in between page refreshes
-    //       localStorage.setItem('currentUser', JSON.stringify(user));
-
-    //       // Display welcome toast!
-    //       setTimeout(() => {
-    //         this._toastrService.success(
-    //           'Bienvenido, ingresaste como ' +
-    //             user.role +
-    //             ' Inicia tu exploración. Enjoy! 🎉',
-    //           '👋 Bienvenido, ' + user.firstName + '!',
-    //           { toastClass: 'toast ngx-toastr', closeButton: true }
-    //         );
-    //       }, 2500);
-
-    //       // notify
-    //       this.currentUserSubject.next(user);
-    //     }
-
-    //     // return user;
-    //   })
-    // );
+    );
   }
+
+
+  /**
+   * Validate Token
+   *
+   */
+  validateToken(): Observable<boolean>  {
+    const token = localStorage.getItem('token') || '';
+
+    return this._http.get(`${environment.base_url}/login/renew`,{
+      headers: {
+        'x-token': token
+      }
+    })
+    .pipe(
+      tap( ( resp: any ) => {
+        console.log('RESP : ', resp);
+        localStorage.setItem('token', resp.token);
+      }),
+      map( resp => true ),
+      catchError( err => of(false) )
+    );
+  }
+
 
   /**
    * User logout
    *
    */
   logout() {
+    console.log('... LOGIN OUT ...');
     // remove user from local storage to log user out
     localStorage.removeItem('currentUser');
+    localStorage.removeItem('token');
     // notify
     this.currentUserSubject.next(null);
   }
